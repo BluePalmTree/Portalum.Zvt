@@ -1,4 +1,6 @@
-﻿namespace Portalum.Zvt.Models
+﻿using System.Collections.Generic;
+
+namespace Portalum.Zvt.Models
 {
     /// <summary>
     /// Receipt Info
@@ -13,6 +15,10 @@
         /// Content of the receipt
         /// </summary>
         public string Content { get; set; }
+        /// <summary>
+        /// Lines of the receipt
+        /// </summary>
+        public List<string> Lines { get; set; }
         /// <summary>
         /// Confirms that all data has been received (End of receipt)
         /// </summary>

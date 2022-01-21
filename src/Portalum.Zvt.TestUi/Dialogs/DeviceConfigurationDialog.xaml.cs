@@ -19,7 +19,7 @@ namespace Portalum.Zvt.TestUi.Dialogs
             this.DeviceConfiguration = new DeviceConfiguration();
 
             this.ComboBoxLanguage.ItemsSource = Enum.GetValues(typeof(Language));
-            this.ComboBoxLanguage.SelectedItem = Zvt.Language.English;
+            this.ComboBoxLanguage.SelectedItem = Zvt.Language.German;
 
             this.ComboBoxEncoding.ItemsSource = Enum.GetValues(typeof(ZvtEncoding));
             this.ComboBoxEncoding.SelectedItem = ZvtEncoding.CodePage437;

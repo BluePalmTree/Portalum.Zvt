@@ -3,6 +3,7 @@ using Portalum.Zvt.Models;
 using Portalum.Zvt.Repositories;
 using Portalum.Zvt.Responses;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Portalum.Zvt.Parsers
@@ -20,6 +21,7 @@ namespace Portalum.Zvt.Parsers
         private bool _completelyProcessed;
         private ReceiptType _receiptType;
         private readonly StringBuilder _receiptContent;
+        private readonly List<string> _receiptLines;
 
         /// <summary>
         /// PrintTextBlockParser
@@ -48,6 +50,7 @@ namespace Portalum.Zvt.Parsers
 
             this._receiptType = ReceiptType.Unknown;
             this._receiptContent = new StringBuilder();
+            this._receiptLines = new List<string>();
         }
 
         /// <inheritdoc />
@@ -65,6 +68,7 @@ namespace Portalum.Zvt.Parsers
             {
                 ReceiptType = this._receiptType,
                 Content = this._receiptContent.ToString(),
+                Lines = this._receiptLines,
                 CompletelyProcessed = this._completelyProcessed
             };
         }
@@ -92,6 +96,7 @@ namespace Portalum.Zvt.Parsers
         {
             var textBlock = this._encoding.GetString(data);
             this._receiptContent.AppendLine(textBlock);
+            this._receiptLines.Add(textBlock);
 
             return true;
         }

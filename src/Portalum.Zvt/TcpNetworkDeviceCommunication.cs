@@ -32,7 +32,7 @@ namespace Portalum.Zvt
         /// <param name="logger"></param>
         public TcpNetworkDeviceCommunication(
             string ipAddress,
-            int port = 20007,
+            int port = 22000,
             bool enableKeepAlive = false,
             ILogger<TcpNetworkDeviceCommunication> logger = default)
         {

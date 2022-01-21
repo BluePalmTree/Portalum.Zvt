@@ -289,6 +289,53 @@ namespace Portalum.Zvt.TestUi
             {
                 MessageBox.Show(exception.ToString());
             }
+
+            var upos = PreparePrintDocument(receiptInfo.Lines);
+
+            outputInfo = new OutputInfo
+            {
+                Title = $"UPOS Syntax",
+                Lines = new string[]
+                {
+                    upos
+                }       
+            };
+
+            try
+            {
+                var receiptWidth = 230;
+                this.AddOutputElement(outputInfo, Brushes.LightGray, receiptWidth);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString());
+            }
+        }
+
+        private string PreparePrintDocument(List<string> lines)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append("<TemplateBody>");
+            stringBuilder.Append(Environment.NewLine);
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(lines[i]))
+                {
+                    stringBuilder.Append($"<txt>{lines[i]}<br/></txt>{Environment.NewLine}");
+                }
+                else
+                {
+                    stringBuilder.Append($"<br/>{Environment.NewLine}");
+                }
+            }
+
+            stringBuilder.Append("<cut/>");
+            stringBuilder.Append(Environment.NewLine);
+            stringBuilder.Append("</TemplateBody>");
+
+            return stringBuilder.ToString();
         }
 
         private void LineReceived(PrintLineInfo printLineInfo)
