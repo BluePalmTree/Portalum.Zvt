@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Application.ico</ApplicationIcon>
 
-    <Version>2.6.0</Version>
+    <Version>2.7.0</Version>
     <Company>Portalum</Company>
   </PropertyGroup>
 
@@ -21,6 +21,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Portalum.Zvt\Portalum.Zvt.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Resources\ColorDictionary.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>
