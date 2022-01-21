@@ -20,6 +20,8 @@ namespace Portalum.Zvt.TestUi.Dialogs
     public partial class DisplayTextDialog : Window
     {
         public List<string> DisplayTexts { get; set; }
+        public int DisplayDuration { get; set; }
+        public int CountBeeps { get; set; }
 
         public DisplayTextDialog()
         {
@@ -37,7 +39,31 @@ namespace Portalum.Zvt.TestUi.Dialogs
                 DisplayTexts.Add(TextBoxDisplayText.GetLineText(i));
             }
 
+            if (int.TryParse(TextBoxDisplayDuration.Text, out int displayDur))
+            {
+                DisplayDuration = displayDur;
+            }
+            else
+            {
+                DisplayDuration = 5;
+            }
+
+            if (int.TryParse(TextBoxCountBeeps.Text, out int countBee))
+            {
+                CountBeeps = countBee;
+            }
+            else
+            {
+                CountBeeps = 0;
+            }
+
             this.DialogResult = true;
+            this.Close();
+        }
+
+        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = false;
             this.Close();
         }
     }

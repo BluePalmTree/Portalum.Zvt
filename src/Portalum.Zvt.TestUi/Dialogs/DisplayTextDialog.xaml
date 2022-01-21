@@ -19,8 +19,18 @@
     
     <Grid>
         <DockPanel Margin="5">
-            <Button Style="{StaticResource BaseButtonStyle}" x:Name="ButtonSave" Content="Display" VerticalAlignment="Top" Height="29" DockPanel.Dock="Bottom" Click="ButtonSave_Click"/>
-            <TextBox x:Name="TextBoxDisplayText" Margin="0,0,0,5" Text="Hello Wörld!" />
+            <UniformGrid Columns="2" DockPanel.Dock="Bottom">
+                <Button Style="{StaticResource BaseButtonStyle}" x:Name="ButtonSave" Content="OK" Height="29" Margin="5" Click="ButtonSave_Click"/>
+                <Button Style="{StaticResource BaseButtonStyle}" x:Name="ButtonCancel" Content="Cancel" Height="29" Margin="5" Click="ButtonCancel_Click"  />
+            </UniformGrid>
+            
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
+                <Label Content="Display Duration s:" Margin="5" />
+                <TextBox x:Name="TextBoxDisplayDuration" Text="5" Width="45" Margin="5" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" />
+                <Label Content="Count Beeps: " Margin="5" />
+                <TextBox x:Name="TextBoxCountBeeps" Text="0" Width="45" Margin="5" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" />
+            </StackPanel>
+            <TextBox x:Name="TextBoxDisplayText" Margin="0,0,0,5" Text="Hello Wörld!" AcceptsReturn="True" MaxLines="8" />
         </DockPanel>
     </Grid>
 </Window>

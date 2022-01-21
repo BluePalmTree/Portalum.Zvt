@@ -372,21 +372,31 @@ namespace Portalum.Zvt
         /// 
         /// </summary>
         /// <param name="lines"></param>
+        /// <param name="displayDuration"></param>
+        /// <param name="countBeeps"></param>
         /// <returns></returns>
-        public async Task<CommandResponse> DisplayTextAsync(List<string> lines)
+        public async Task<CommandResponse> DisplayTextAsync(List<string> lines, int displayDuration, int countBeeps)
         {
             this._logger.LogInformation($"{nameof(DisplayTextAsync)} - Execute");
+
+            var llvarParser = new Parsers.LlvarParser();
 
             var package = new List<byte>();
 
             package.Add(0xF0);
-            package.Add(0x3);
+            package.Add(Convert.ToByte(displayDuration));
 
-            package.Add(0xF1);
-            package.Add(0xF0);
-            package.Add(Convert.ToByte(ByteHelper.StringToByteArray(lines[0]).Length));
-            package.AddRange(ByteHelper.StringToByteArray(lines[0]));
+            int linesCount = lines.Count > 8 ? 8 : lines.Count;
 
+            for (int i = 0; i < linesCount; i++)
+            {
+                package.Add(Convert.ToByte(240 + i + 1));
+                package.AddRange(llvarParser.GetLength(ByteHelper.StringToByteArray(lines[i]).Length));
+                package.AddRange(ByteHelper.StringToByteArray(lines[i]));
+            }
+
+            package.Add(0xF9);
+            package.Add(Convert.ToByte(countBeeps));
 
             var fullPackage = this.CreatePackage(new byte[] { 0x06, 0xE0 }, package);
             return await this.SendCommandAsync(fullPackage);

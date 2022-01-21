@@ -658,7 +658,7 @@ namespace Portalum.Zvt.TestUi
             this.ButtonSoftwareUpdate.IsEnabled = true;
         }
 
-        private async Task DisplayTextAsync(List<string> text)
+        private async Task DisplayTextAsync(List<string> text, int displayDuration, int countBeeps)
         {
             if (!this.IsZvtClientReady())
             {
@@ -666,7 +666,7 @@ namespace Portalum.Zvt.TestUi
             }
 
             this.AddCommandInfo("DisplayTextAsync (06 E0)");
-            var commandResponse = await this._zvtClient.DisplayTextAsync(text);
+            var commandResponse = await this._zvtClient.DisplayTextAsync(text, displayDuration, countBeeps);
             this.ProcessCommandRespone(commandResponse);
         }
 
@@ -749,11 +749,6 @@ namespace Portalum.Zvt.TestUi
             await this.SoftwareUpdateAsync();
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
         private async void ButtonDisplayText_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new DisplayTextDialog
@@ -768,7 +763,12 @@ namespace Portalum.Zvt.TestUi
             }
 
             var displayText = dialog.DisplayTexts;
-            await this.DisplayTextAsync(displayText);
+            await this.DisplayTextAsync(displayText, dialog.DisplayDuration, dialog.CountBeeps);
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }
