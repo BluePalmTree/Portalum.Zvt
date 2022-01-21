@@ -369,6 +369,30 @@ namespace Portalum.Zvt
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <returns></returns>
+        public async Task<CommandResponse> DisplayTextAsync(List<string> lines)
+        {
+            this._logger.LogInformation($"{nameof(DisplayTextAsync)} - Execute");
+
+            var package = new List<byte>();
+
+            package.Add(0xF0);
+            package.Add(0x3);
+
+            package.Add(0xF1);
+            package.Add(0xF0);
+            package.Add(Convert.ToByte(ByteHelper.StringToByteArray(lines[0]).Length));
+            package.AddRange(ByteHelper.StringToByteArray(lines[0]));
+
+
+            var fullPackage = this.CreatePackage(new byte[] { 0x06, 0xE0 }, package);
+            return await this.SendCommandAsync(fullPackage);
+        }
+
+        /// <summary>
         /// Authorization (06 01)
         /// Payment process and transmits the amount from the ECR to PT.
         /// </summary>

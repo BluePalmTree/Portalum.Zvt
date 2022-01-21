@@ -658,6 +658,18 @@ namespace Portalum.Zvt.TestUi
             this.ButtonSoftwareUpdate.IsEnabled = true;
         }
 
+        private async Task DisplayTextAsync(List<string> text)
+        {
+            if (!this.IsZvtClientReady())
+            {
+                return;
+            }
+
+            this.AddCommandInfo("DisplayTextAsync (06 E0)");
+            var commandResponse = await this._zvtClient.DisplayTextAsync(text);
+            this.ProcessCommandRespone(commandResponse);
+        }
+
         private async void ButtonRegistration_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new RegistrationConfigurationDialog
@@ -740,6 +752,23 @@ namespace Portalum.Zvt.TestUi
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private async void ButtonDisplayText_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new DisplayTextDialog
+            {
+                Owner = this
+            };
+
+            var dialogResult = dialog.ShowDialog();
+            if (!dialogResult.HasValue || !dialogResult.Value)
+            {
+                return;
+            }
+
+            var displayText = dialog.DisplayTexts;
+            await this.DisplayTextAsync(displayText);
         }
     }
 }

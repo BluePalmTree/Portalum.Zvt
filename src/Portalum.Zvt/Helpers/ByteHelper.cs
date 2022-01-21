@@ -39,5 +39,20 @@ namespace Portalum.Zvt.Helpers
 
             return hex.ToString();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static byte[] StringToByteArray(string text) => ByteHelper.StringToByteArray(text, Encoding.ASCII);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static byte[] StringToByteArray(string text, Encoding encoding) => encoding.GetBytes(text);
     }
 }

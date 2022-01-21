@@ -72,6 +72,7 @@
                             <Button Style="{StaticResource BaseButtonStyle}" x:Name="ButtonRepeatReceipt" Content="Repeat Receipt" HorizontalAlignment="Center" Margin="0,9,0,0" VerticalAlignment="Top" Width="90" Height="29" Click="ButtonRepeatReceipt_Click"/>
                             <Button Style="{StaticResource BaseButtonStyle}" x:Name="ButtonEndOfDay" Content="End of Day" HorizontalAlignment="Left" VerticalAlignment="Top" Click="ButtonEndOfDay_Click" Width="90" Height="29" Margin="10,9,0,0"/>
                             <Button Style="{StaticResource BaseButtonStyle}" x:Name="ButtonSoftwareUpdate" Content="Software Update" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="29" Margin="10,47,0,0" FontSize="11" Click="ButtonSoftwareUpdate_Click"/>
+                            <Button Style="{StaticResource BaseButtonStyle}" x:Name="ButtonDisplayText" Content="Display Text" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="29" Margin="107,47,0,0" FontSize="11" Click="ButtonDisplayText_Click" />
                         </Grid>
                     </GroupBox>
                     <GroupBox Template="{StaticResource GroupBoxWithHeader}" Header="Payment" Foreground="White" Margin="0,162,0,0" HorizontalAlignment="Left" Width="307" Height="148" VerticalAlignment="Top">
