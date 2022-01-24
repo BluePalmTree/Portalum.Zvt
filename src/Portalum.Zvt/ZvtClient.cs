@@ -369,7 +369,7 @@ namespace Portalum.Zvt
         }
 
         /// <summary>
-        /// 
+        /// Display Text (06 E0)
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="displayDuration"></param>
@@ -379,26 +379,64 @@ namespace Portalum.Zvt
         {
             this._logger.LogInformation($"{nameof(DisplayTextAsync)} - Execute");
 
-            var llvarParser = new Parsers.LlvarParser();
-
             var package = new List<byte>();
 
             package.Add(0xF0);
-            package.Add(Convert.ToByte(displayDuration));
+            package.Add(Convert.ToByte(displayDuration));            
 
             int linesCount = lines.Count > 8 ? 8 : lines.Count;
-
             for (int i = 0; i < linesCount; i++)
             {
                 package.Add(Convert.ToByte(240 + i + 1));
-                package.AddRange(llvarParser.GetLength(ByteHelper.StringToByteArray(lines[i]).Length));
-                package.AddRange(ByteHelper.StringToByteArray(lines[i]));
+                var bytes = ByteHelper.StringToByteArray(lines[i]);                
+                package.AddRange(Parsers.LVarParser.ComposeLLVarData(ByteHelper.StringToByteArray(lines[i])));
             }
 
             package.Add(0xF9);
             package.Add(Convert.ToByte(countBeeps));
 
             var fullPackage = this.CreatePackage(new byte[] { 0x06, 0xE0 }, package);
+            return await this.SendCommandAsync(fullPackage);
+        }
+
+        /// <summary>
+        /// Activate Card (06 04)
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="bonusPoints"></param>
+        /// <returns></returns>
+        public async Task<CommandResponse> ActivateCardAsync(decimal amount, int bonusPoints)
+        {
+            this._logger.LogInformation($"{nameof(ActivateCardAsync)} - Execute");
+
+            var package = new List<byte>();
+
+            if (amount > 0)
+            {
+                package.Add(0x04);
+                package.AddRange(NumberHelper.DecimalToBcd(amount));
+
+                package.Add(0x49);
+                package.AddRange(NumberHelper.IntToBcd(978, 2)); //978 = Euro
+            }
+
+            TlvContainerParameter tlvContainer = new TlvContainerParameter();
+
+            var receiptParameter = new TlvItem(new TlvTag(new byte[] { 0x1F, 0x04 }), new List<byte>() { 0xF0 });
+            tlvContainer.TlvItems.Add(receiptParameter);
+
+            var bonusPointContainerParameter = new TlvItem(new TlvTag(new byte[] { 0xE1 }));
+            // C1 = TransactionType 9.4.3.1 ('47 4C' = Card top-up)
+            bonusPointContainerParameter.SubItems.Add(new TlvItem(new TlvTag(new byte[] { 0xC1 }), new List<byte>() { 0x47, 0x4C }));
+            // C2 = number of bonus points
+            bonusPointContainerParameter.SubItems.Add(new TlvItem(new TlvTag(new byte[] { 0xC2 }), NumberHelper.IntToBcd(bonusPoints, 8).ToList()));
+
+            tlvContainer.TlvItems.Add(bonusPointContainerParameter);
+
+            var data = tlvContainer.GetBytes();
+            package.AddRange(data);
+
+            var fullPackage = this.CreatePackage(new byte[] { 0x06, 0x04 }, package);
             return await this.SendCommandAsync(fullPackage);
         }
 

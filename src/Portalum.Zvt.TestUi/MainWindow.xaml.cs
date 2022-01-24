@@ -670,6 +670,18 @@ namespace Portalum.Zvt.TestUi
             this.ProcessCommandRespone(commandResponse);
         }
 
+        private async Task ActivateCardAsync(decimal amount, int bonusPoints)
+        {
+            if (!this.IsZvtClientReady())
+            {
+                return;
+            }
+
+            this.AddCommandInfo("ActivateCardAsync (06 04)");
+            var commandResponse = await this._zvtClient.ActivateCardAsync(amount, bonusPoints);
+            this.ProcessCommandRespone(commandResponse);
+        }
+
         private async void ButtonRegistration_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new RegistrationConfigurationDialog
@@ -769,6 +781,22 @@ namespace Portalum.Zvt.TestUi
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private async void ButtonActivateCard_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ActivateCardDialog
+            {
+                Owner = this
+            };
+
+            var dialogResult = dialog.ShowDialog();
+            if (!dialogResult.HasValue || !dialogResult.Value)
+            {
+                return;
+            }
+
+            await this.ActivateCardAsync(dialog.Amount, dialog.Bonuspoints);
         }
     }
 }
