@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Portalum.Zvt.TestUi.Dialogs
+namespace Portalum.Zvt.ControlPanel.Dialogs
 {
     /// <summary>
     /// Interaction logic for ActivateCardDialog.xaml
