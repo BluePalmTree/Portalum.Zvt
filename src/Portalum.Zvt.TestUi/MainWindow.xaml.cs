@@ -682,6 +682,18 @@ namespace Portalum.Zvt.TestUi
             this.ProcessCommandRespone(commandResponse);
         }
 
+        private async Task AccountBalanceRequestAsync()
+        {
+            if (!this.IsZvtClientReady())
+            {
+                return;
+            }
+
+            this.AddCommandInfo("AccountBalanceRequest (06 03)");
+            var commandResponse = await this._zvtClient.AccountBalanceRequestAsync();
+            this.ProcessCommandRespone(commandResponse);
+        }
+
         private async void ButtonRegistration_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new RegistrationConfigurationDialog
@@ -797,6 +809,11 @@ namespace Portalum.Zvt.TestUi
             }
 
             await this.ActivateCardAsync(dialog.Amount, dialog.Bonuspoints);
+        }
+
+        private async void ButtonAccountBalanceRequest_Click(object sender, RoutedEventArgs e)
+        {
+            await this.AccountBalanceRequestAsync();
         }
     }
 }

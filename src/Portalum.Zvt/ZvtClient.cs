@@ -441,6 +441,31 @@ namespace Portalum.Zvt
         }
 
         /// <summary>
+        /// Account Balance Request (06 03)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<CommandResponse> AccountBalanceRequestAsync()
+        {
+            this._logger.LogInformation($"{nameof(AccountBalanceRequestAsync)} - Execute");
+
+            var package = new List<byte>();
+
+            TlvContainerParameter tlvContainer = new TlvContainerParameter();
+
+            var bonusPointContainerParameter = new TlvItem(new TlvTag(new byte[] { 0xE1 }));
+            // C1 = TransactionType 9.4.3.1 ('47 4C' = enquire bonus-points)
+            bonusPointContainerParameter.SubItems.Add(new TlvItem(new TlvTag(new byte[] { 0xC1 }), new List<byte>() { 0x4D, 0x55 }));
+
+            tlvContainer.TlvItems.Add(bonusPointContainerParameter);
+
+            var data = tlvContainer.GetBytes();
+            package.AddRange(data);
+
+            var fullPackage = this.CreatePackage(new byte[] { 0x06, 0x03 }, package);
+            return await this.SendCommandAsync(fullPackage);
+        }
+
+        /// <summary>
         /// Authorization (06 01)
         /// Payment process and transmits the amount from the ECR to PT.
         /// </summary>
