@@ -23,6 +23,7 @@ namespace Portalum.Zvt
 
         private readonly ILogger<ZvtClient> _logger;
         private readonly byte[] _passwordData;
+        private readonly ZvtEncoding _zvtEncoding;
 
         private readonly ZvtCommunication _zvtCommunication;
         private IReceiveHandler _receiveHandler;
@@ -57,6 +58,7 @@ namespace Portalum.Zvt
             this._logger = logger;
 
             this._passwordData = NumberHelper.IntToBcd(password);
+            this._zvtEncoding = ZvtEncoding.CodePage437;
 
             #region ReceiveHandler
 
@@ -103,6 +105,7 @@ namespace Portalum.Zvt
             this._commandCompletionTimeout = clientConfig.CommandCompletionTimeout;
 
             this._passwordData = NumberHelper.IntToBcd(clientConfig.Password);
+            this._zvtEncoding = clientConfig.Encoding;
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             this.InitializeReceiveHandler(clientConfig.Language, this.GetEncoding(clientConfig.Encoding));
@@ -382,14 +385,15 @@ namespace Portalum.Zvt
             var package = new List<byte>();
 
             package.Add(0xF0);
-            package.Add(Convert.ToByte(displayDuration));            
+            package.Add(Convert.ToByte(displayDuration));
 
             int linesCount = lines.Count > 8 ? 8 : lines.Count;
+            var encoding = this.GetEncoding(_zvtEncoding);
             for (int i = 0; i < linesCount; i++)
             {
                 package.Add(Convert.ToByte(240 + i + 1));
                 var bytes = ByteHelper.StringToByteArray(lines[i]);                
-                package.AddRange(Parsers.LVarParser.ComposeLLVarData(ByteHelper.StringToByteArray(lines[i])));
+                package.AddRange(Parsers.LVarParser.ComposeLLVarData(ByteHelper.StringToByteArray(lines[i], encoding)));
             }
 
             package.Add(0xF9);
