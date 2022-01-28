@@ -142,5 +142,35 @@ namespace Portalum.Zvt.Parsers
         {
             return ComposeLVarData(rawData, 3);
         }
+
+        public static byte[] EncodeString(string s)
+        {
+            if (s.Length % 2 != 0)
+            {
+                s += "F";
+            }
+
+            byte[] data = new byte[s.Length / 2];
+            
+            for (int i = 0; i < s.Length; i += 2)
+            {
+                byte num = Convert.ToByte(s.Substring(i, 2), 16);
+                data[i / 2] = num;
+            }
+
+            return data;
+        }
+
+        public static string DecodeString(byte[] data)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                stringBuilder.AppendFormat("{0:X2}", data[i]);
+            }
+
+            return stringBuilder.ToString();
+        }
     }
 }

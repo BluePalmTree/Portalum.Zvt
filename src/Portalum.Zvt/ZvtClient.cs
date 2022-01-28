@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Portalum.Zvt.Helpers;
 using Portalum.Zvt.Models;
+using Portalum.Zvt.Parsers;
 using Portalum.Zvt.Repositories;
 using System;
 using System.Collections.Generic;
@@ -474,14 +475,61 @@ namespace Portalum.Zvt
         /// Payment process and transmits the amount from the ECR to PT.
         /// </summary>
         /// <param name="amount"></param>
+        /// <param name="paymentType"></param>
+        /// <param name="printerReady"></param>
+        /// <param name="track1"></param>
+        /// <param name="track2"></param>
+        /// <param name="track3"></param>
+        /// <param name="cardNumber"></param>
+        /// <param name="expiryDate"></param>
         /// <returns></returns>
-        public async Task<CommandResponse> PaymentAsync(decimal amount)
+        public async Task<CommandResponse> PaymentAsync(decimal amount, PaymentType paymentType = PaymentType.PTDecission, bool printerReady = true,
+            string track1 = "", string track2 = "", string track3 = "", string cardNumber = "", DateTime? expiryDate = null)
         {
             this._logger.LogInformation($"{nameof(PaymentAsync)} - Execute with amount of:{amount}");
 
             var package = new List<byte>();
             package.Add(0x04); //Amount prefix
             package.AddRange(NumberHelper.DecimalToBcd(amount));
+
+            package.Add(0x19); //Payment-type
+            var ptByte = (byte)paymentType;
+            if (printerReady)
+            {
+                ptByte += 0x4;
+            }
+            package.Add(ptByte);
+
+            if (!string.IsNullOrEmpty(track1))
+            {
+                package.Add(0x2D);
+                package.AddRange(LVarParser.ComposeLLVarData(LVarParser.EncodeString(track1)));
+            }
+
+            if (!string.IsNullOrEmpty(track2))
+            {
+                package.Add(0x23);
+                package.AddRange(LVarParser.ComposeLLVarData(LVarParser.EncodeString(track2)));
+            }
+
+            if (!string.IsNullOrEmpty(track3))
+            {
+                package.Add(0x24);
+                package.AddRange(LVarParser.ComposeLLLVarData(LVarParser.EncodeString(track3)));
+            }
+
+            if (!string.IsNullOrEmpty(cardNumber))
+            {
+                package.Add(0x22);
+                package.AddRange(LVarParser.ComposeLLVarData(LVarParser.EncodeString(cardNumber)));
+            }
+
+            if (expiryDate.HasValue)
+            {
+                package.Add(0x0E);
+                var yy = expiryDate.Value.ToString("yyMM");
+                package.AddRange(NumberHelper.IntToBcd(int.Parse(yy), 2));
+            }
 
             var fullPackage = this.CreatePackage(new byte[] { 0x06, 0x01 }, package);
             return await this.SendCommandAsync(fullPackage);

@@ -525,7 +525,8 @@ namespace Portalum.Zvt.ControlPanel
             this.ButtonRegistration.IsEnabled = true;
         }
 
-        private async Task PaymentAsync(decimal amount)
+        private async Task PaymentAsync(decimal amount, PaymentType paymentType = PaymentType.PTDecission, bool printerReady = true, 
+            string track1 = "", string track2 = "", string track3 = "", string cardNumber = "", DateTime? expiryDate = null)
         {
             if (!this.IsZvtClientReady())
             {
@@ -535,7 +536,7 @@ namespace Portalum.Zvt.ControlPanel
             this.AddCommandInfo("Payment/Authorization (06 01)");
 
             this.ButtonPay.IsEnabled = false;
-            var commandResponse = await this._zvtClient?.PaymentAsync(amount);
+            var commandResponse = await this._zvtClient?.PaymentAsync(amount, paymentType, printerReady, track1, track2, track3, cardNumber, expiryDate);
             this.ProcessCommandRespone(commandResponse);
             this.ButtonPay.IsEnabled = true;
         }
@@ -723,13 +724,25 @@ namespace Portalum.Zvt.ControlPanel
 
         private async void ButtonPay_Click(object sender, RoutedEventArgs e)
         {
-            if (!decimal.TryParse(this.TextBoxAmount.Text, NumberStyles.Currency, CultureInfo.InvariantCulture, out var amount))
+            //if (!decimal.TryParse(this.TextBoxAmount.Text, NumberStyles.Currency, CultureInfo.InvariantCulture, out var amount))
+            //{
+            //    MessageBox.Show("Cannot parse amount");
+            //    return;
+            //}
+
+            var dialog = new AuthorizationDialog
             {
-                MessageBox.Show("Cannot parse amount");
+                Owner = this
+            };
+
+            var dialogResult = dialog.ShowDialog();
+            if (!dialogResult.HasValue || !dialogResult.Value)
+            {
                 return;
             }
 
-            await this.PaymentAsync(amount);
+            await this.PaymentAsync(dialog.Amount, dialog.PaymentType, dialog.PrinterReady, 
+                dialog.Track1, dialog.Track2, dialog.Track3, dialog.CardNo, dialog.ExpiryDate);
         }
 
         private async void ButtonRefund_Click(object sender, RoutedEventArgs e)
